@@ -2518,6 +2518,7 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
 					      binder_size_t *failed_at)
 {
 	binder_size_t *offp, *off_start, *off_end;
+
 	int debug_id = buffer->debug_id;
 
 	binder_debug(BINDER_DEBUG_TRANSACTION,
