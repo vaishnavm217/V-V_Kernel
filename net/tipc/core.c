@@ -145,6 +145,10 @@ static int __init tipc_init(void)
 	if (err)
 		goto out_socket;
 
+	err = register_pernet_subsys(&tipc_topsrv_net_ops);
+	if (err)
+		goto out_pernet_topsrv;
+
 	err = tipc_bearer_setup();
 	if (err)
 		goto out_bearer;
