@@ -447,6 +447,7 @@ static int smsusb_init_device(struct usb_interface *intf, int board_id)
 	default:
 		dev->buffer_size = USB2_BUFFER_SIZE;
 		dev->response_alignment = align;
+
 		params.flags |= SMS_DEVICE_FAMILY2;
 		break;
 	}
