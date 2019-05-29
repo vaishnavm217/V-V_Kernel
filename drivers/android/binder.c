@@ -1214,17 +1214,9 @@ static void binder_wakeup_poll_threads_ilocked(struct binder_proc *proc,
 	struct rb_node *n;
 	struct binder_thread *thread;
 
-	for (n = rb_first(&proc->threads); n != NULL; n = rb_next(n)) {
-		thread = rb_entry(n, struct binder_thread, rb_node);
-		if (thread->looper & BINDER_LOOPER_STATE_POLL &&
-		    binder_available_for_proc_work_ilocked(thread)) {
-			if (sync)
-				wake_up_interruptible_sync(&thread->wait);
-			else
-				wake_up_interruptible(&thread->wait);
-		}
-	}
-}
+	binder_debug(BINDER_DEBUG_BUFFER_ALLOC,
+		     "%d: add free buffer, size %zd, at %pK\n",
+		      proc->pid, new_buffer_size, new_buffer);
 
 /**
  * binder_select_thread_ilocked() - selects a thread for doing proc work.
@@ -1309,6 +1301,7 @@ static void binder_wakeup_proc_ilocked(struct binder_proc *proc)
 
 static bool is_rt_policy(int policy)
 {
+
 	return policy == SCHED_FIFO || policy == SCHED_RR;
 }
 
@@ -1348,7 +1341,7 @@ static void binder_do_set_priority(struct task_struct *task,
 
 	if (task->policy == policy && task->normal_prio == desired.prio)
 		return;
-
+	
 	has_cap_nice = has_capability_noaudit(task, CAP_SYS_NICE);
 
 	priority = to_userspace_prio(policy, desired.prio);
