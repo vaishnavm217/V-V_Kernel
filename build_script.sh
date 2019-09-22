@@ -30,9 +30,9 @@ if [ $? -eq 0 ]; then
 	telegram-send 'Build Image Successful
 	Token:'$TOKEN'
 	Link: '$Link
+	rm -rf kernelvv.img defconfig.log build.log
 fi
 
-rm -rf kernelvv.img defconfig.log build.log
 rm -rf out/
 make mrproper
 make clean
