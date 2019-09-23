@@ -1214,10 +1214,17 @@ static void binder_wakeup_poll_threads_ilocked(struct binder_proc *proc,
 	struct rb_node *n;
 	struct binder_thread *thread;
 
-	binder_debug(BINDER_DEBUG_BUFFER_ALLOC,
-		     "%d: add free buffer, size %zd, at %pK\n",
-		      proc->pid, new_buffer_size, new_buffer);
-
+	for (n = rb_first(&proc->threads); n != NULL; n = rb_next(n)) {
+		thread = rb_entry(n, struct binder_thread, rb_node);
+		if (thread->looper & BINDER_LOOPER_STATE_POLL &&
+		    binder_available_for_proc_work_ilocked(thread)) {
+			if (sync)
+				wake_up_interruptible_sync(&thread->wait);
+			else
+				wake_up_interruptible(&thread->wait);
+		}
+	}
+}
 /**
  * binder_select_thread_ilocked() - selects a thread for doing proc work.
  * @proc:	process to select a thread from
