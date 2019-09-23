@@ -2251,6 +2251,7 @@ relock:
 				&sighand->action[SIGKILL - 1]);
 		recalc_sigpending();
 		goto fatal;
+	}
 
 	for (;;) {
 		struct k_sigaction *ka;
